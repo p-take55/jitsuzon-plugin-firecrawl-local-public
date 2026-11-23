@@ -19,3 +19,7 @@
 Discoverからの新規導入、JavaScript描画・Chrome、PDF、crawl/map等の通常動作、全31toolsの副作用は未検証。元の実Agent確認は専用環境へのfixture配置後のresumeで、新規Discover導入全体の確認ではない。
 
 Cloud転送停止は、取得本文を要約用LLMへ渡さない保証ではない。全ネットワーク通信をcaptureした証明でもない。公式MCPのscrape以外を強制禁止する仕組みは含めない。
+
+## 0.2.0で加えたもの（未検証）
+
+Cloudを使うかを利用者に確認して `mcp.json` を切り替えるSkill `firecrawl-cloud-setting` と、READMEの手順を加えた。`FIRECRAWL_CLOUD=auto` での取得、`firecrawl-local login` 後の動作、Skillに沿った切り替えの実動作は確認していない。

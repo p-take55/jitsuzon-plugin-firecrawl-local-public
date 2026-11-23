@@ -29,6 +29,6 @@
       ]
     }
   },
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "公開Webページの本文をFirecrawl Localで取得し、Agentの要約に使う。"
 }

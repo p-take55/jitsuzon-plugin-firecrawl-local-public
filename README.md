@@ -17,7 +17,7 @@ npx --version
 
 依存の導入は自動実行しません。Chrome/ChromiumはJavaScript描画が必要なページで使われます。ブラウザなしで取得できないページもあり、全サイトの本文取得は保証しません。
 
-API key、Firecrawlへのlogin、Docker、Redis、Postgresは不要です。本Pluginは単一binaryのLocalを使います。Firecrawl Cloudや、Docker等でfull serverを運用するself-host構成とは異なります。
+API key、Firecrawlへのlogin、Docker、Redis、Postgresは不要です（Cloudを使う場合のloginは任意。後述）。本Pluginは単一binaryのLocalを使います。Firecrawl Cloudや、Docker等でfull serverを運用するself-host構成とは異なります。
 
 ## Agentへ追加して使う
 
@@ -33,7 +33,7 @@ Agentは `firecrawl_scrape` に対象の公開URLと `formats: ["markdown"]` を
 
 ## 取得範囲
 
-`FIRECRAWL_CLOUD=off` をMCP環境に固定し、取得できないページのCloud fallbackとCloud検索を停止します。対象Webサイトへの通信とnpm package取得は行います。取得本文は要約のためAgentのLLMへ渡ります。Firecrawl Cloudへの転送停止は、要約まで端末内で完結する保証ではありません。`--public-only` によりlocalhostやprivate networkへの取得を拒否します。
+配布時の `mcp.json` は `FIRECRAWL_CLOUD=off` です。取得できないページのCloud fallbackとCloud検索を停止します。対象Webサイトへの通信とnpm package取得は行います。取得本文は要約のためAgentのLLMへ渡ります。Firecrawl Cloudへの転送停止は、要約まで端末内で完結する保証ではありません。`--public-only` によりlocalhostやprivate networkへの取得を拒否します。
 
 本Pluginの用途は公開URLの単一ページ本文取得です。公式MCPにはcrawl/map、skillを作成・変更する `firecrawl_save_skill` 等も表示されます。このPluginはtoolを非表示にしたり、scrape以外の呼出しを強制的に禁止したりしません。Cloud無効化は全toolの副作用を無効にする設定ではありません。初版ではscrape以外の通常動作を検証していません。Cloud専用toolも表示されることがあり、Cloudを必要とする要求は失敗します。検索・巡回・ログインが必要なページへの対応は提供範囲に含めません。
 
@@ -43,7 +43,16 @@ Agentは `firecrawl_scrape` に対象の公開URLと `formats: ["markdown"]` を
 
 - command確認失敗：AgentのPATHとLocal / Node.js / npxのversionを確認します。
 - MCP起動失敗：npm取得の接続とcache、初回起動時間を確認します。初回取得がaachatの確認期限を超えた場合もReadyにはなりません。
-- Cloud無効のエラー：本Pluginの設定どおりです。Cloudを有効にして回避せず、公開URLの本文取得という依頼範囲を確認します。
+- Cloud無効のエラー：`off` の設定どおりです。利用者がCloudを選んだ場合だけ、次節の手順で切り替えます。
 - 本文なし・ブラウザ警告・サイト側の拒否：その理由を報告します。Chromeの有無、公開状態、対象サイトの制限を確認します。
+
+## Cloudを使う（任意）
+
+最初は端末の中だけで取得します。取得できないページがあったときや、利用者がCloudについて尋ねたときに、同梱のSkill `firecrawl-cloud-setting` に沿ってAgentが一度だけ確認します。Agentが自分の判断で切り替えることはありません。
+
+- 利用者が選ぶと、Agentは配置済みの `mcp.json`（通常 `.agents/plugins/firecrawl-local/mcp.json`）の `FIRECRAWL_CLOUD` を `auto` に書き換え、commit・pushします。次のSessionから有効です。`off` に戻すときも同じです。
+- `auto` では、取得できないページの取り直しと検索などがFirecrawl Cloudに送られます。アカウントなしでも使えますが、回数に制限があります。
+- Firecrawlのアカウントがある場合は、Agentが動く端末のターミナルで `firecrawl-local login` を実行します。保存されたloginは以後のSessionで自動的に使われます。API keyは会話に貼りません。
+- Pluginを更新して置き直すと、`mcp.json` は配布時の `off` に戻ります。
 
 実測範囲は [VERIFICATION.md](VERIFICATION.md) を参照してください。
