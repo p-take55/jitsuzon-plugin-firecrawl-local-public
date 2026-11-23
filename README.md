@@ -2,7 +2,7 @@
 
 公開WebページのURLをAgentへ渡し、[Firecrawl Local](https://github.com/firecrawl/firecrawl/tree/main/apps/local)で本文をMarkdownとして取得するaachat Pluginです。取得した本文の要約はAgentが行います。
 
-この独立repositoryがPluginの配布単位です。現在は公開前の候補で、Discoverにはまだ登録していません。利用者が導入するのはrootの `plugin.json` と `mcp.json`、この導入手順です。Firecrawl本体・Node.js・ブラウザは同梱しません。未登録のcatalog IDによるinstallはできません。
+この独立repositoryがPluginの配布単位です。Discoverで `firecrawl-local`（「Webページをローカルで取得」）を選び、Agentへ追加します。利用者が導入するのはrootの `plugin.json` と `mcp.json`、この導入手順です。Firecrawl本体・Node.js・ブラウザは同梱しません。
 
 ## 実行端末の準備
 
@@ -21,7 +21,7 @@ API key、Firecrawlへのlogin、Docker、Redis、Postgresは不要です。本P
 
 ## Agentへ追加して使う
 
-公開後は既存の **Add to agent** から対象Agentへ追加します。Plugin配置後は新しいSessionを開始します。Readyはcommand確認とMCP initialize・tools/listの成功を示し、対象URLの本文取得成功は別に確認します。
+Discoverの **Add to agent** から対象Agentへ追加します。Plugin配置後は新しいSessionを開始します。Readyはcommand確認とMCP initialize・tools/listの成功を示し、対象URLの本文取得成功は別に確認します。
 
 依頼例：
 
@@ -35,7 +35,7 @@ Agentは `firecrawl_scrape` に対象の公開URLと `formats: ["markdown"]` を
 
 `FIRECRAWL_CLOUD=off` をMCP環境に固定し、取得できないページのCloud fallbackとCloud検索を停止します。対象Webサイトへの通信とnpm package取得は行います。取得本文は要約のためAgentのLLMへ渡ります。Firecrawl Cloudへの転送停止は、要約まで端末内で完結する保証ではありません。`--public-only` によりlocalhostやprivate networkへの取得を拒否します。
 
-本Pluginの用途は公開URLの単一ページ本文取得です。公式MCPにはcrawl/map、skillを作成・変更する `firecrawl_save_skill` 等も表示されます。このPluginはtoolを非表示にしたり、scrape以外の呼出しを強制的に禁止したりしません。Cloud無効化は全toolの副作用を無効にする設定ではありません。この候補ではscrape以外の通常動作を検証していません。Cloud専用toolも表示されることがあり、Cloudを必要とする要求は失敗します。検索・巡回・ログインが必要なページへの対応は提供範囲に含めません。
+本Pluginの用途は公開URLの単一ページ本文取得です。公式MCPにはcrawl/map、skillを作成・変更する `firecrawl_save_skill` 等も表示されます。このPluginはtoolを非表示にしたり、scrape以外の呼出しを強制的に禁止したりしません。Cloud無効化は全toolの副作用を無効にする設定ではありません。初版ではscrape以外の通常動作を検証していません。Cloud専用toolも表示されることがあり、Cloudを必要とする要求は失敗します。検索・巡回・ログインが必要なページへの対応は提供範囲に含めません。
 
 導入例と検証はLocal 0.1.1を使用します。command確認はLocalのversionを強制しません。MCP packageは宣言で3.41.0を指定します。npmの推移依存全体は固定していないため、将来の取得結果まで完全には再現しません。
 
